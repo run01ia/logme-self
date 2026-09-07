@@ -11,37 +11,88 @@
 {% when Some(report) %}
 
     <section id="top">
-        <h1>{{ report.date.as_deref().unwrap_or("(none)") }}</h1>
-        <h2>{{ report.updatedate.as_deref().unwrap_or("(none)") }}</h2>
+        <h1>
+            {% match report.date %}
+            {% when Some(date) %}
+                {{ date }}
+            {% when None %}
+                (none)
+            {% endmatch %}
+        </h1>
+
+        <h2>
+            {% match report.updatedate %}
+            {% when Some(updatedate) %}
+                {{ updatedate }}
+            {% when None %}
+                (none)
+            {% endmatch %}
+        </h2>
     </section>
 
     <section id="active-time">
         <h2>Active Time</h2>
+
         <p>
-            {{ report.summary.as_ref()
-                .and_then(|s| s.wake_up.as_deref())
-                .unwrap_or("(none)") }}
+            {% match report.summary %}
+            {% when Some(summary) %}
+
+                {% match summary.start %}
+                {% when Some(start) %}
+                    {{ start }}
+                {% when None %}
+                    (none)
+                {% endmatch %}
+
+            {% when None %}
+                (none)
+            {% endmatch %}
         </p>
+
         <p>
-            {{ report.summary.as_ref()
-                .and_then(|s| s.sleep.as_deref())
-                .unwrap_or("(none)") }}
+            {% match report.summary %}
+            {% when Some(summary) %}
+
+                {% match summary.finish %}
+                {% when Some(finish) %}
+                    {{ finish }}
+                {% when None %}
+                    (none)
+                {% endmatch %}
+
+            {% when None %}
+                (none)
+            {% endmatch %}
         </p>
     </section>
 
     <section>
         <h2>Note</h2>
 
-        <p style="white-space: pre-wrap;">{{ report.note.as_ref()
-            .and_then(|n| n.text.as_deref())
-            .unwrap_or("(none)") }}</p>
+        <p style="white-space: pre-wrap;">
+            {% match report.note %}
+            {% when Some(note) %}
+
+                {% match note.text %}
+                {% when Some(text) %}
+                    {{ text }}
+                {% when None %}
+                    (none)
+                {% endmatch %}
+
+            {% when None %}
+                (none)
+            {% endmatch %}
+        </p>
     </section>
 
 {% when None %}
+
     <div id="not-found">
         <h1>Report Not Found</h1>
         <p>この日の記録はありません</p>
     </div>
+
 {% endmatch %}
 </body>
 </html>
