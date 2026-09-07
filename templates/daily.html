@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Report</title>
+</head>
+
+<body>
+{% match report %}
+{% when Some(report) %}
+
+    <section id="top">
+        <h1>{{ report.date.as_deref().unwrap_or("(none)") }}</h1>
+        <h2>{{ report.updatedate.as_deref().unwrap_or("(none)") }}</h2>
+    </section>
+
+    <section id="active-time">
+        <h2>Active Time</h2>
+        <p>
+            {{ report.summary.as_ref()
+                .and_then(|s| s.wake_up.as_deref())
+                .unwrap_or("(none)") }}
+        </p>
+        <p>
+            {{ report.summary.as_ref()
+                .and_then(|s| s.sleep.as_deref())
+                .unwrap_or("(none)") }}
+        </p>
+    </section>
+
+    <section>
+        <h2>Note</h2>
+
+        <p style="white-space: pre-wrap;">{{ report.note.as_ref()
+            .and_then(|n| n.text.as_deref())
+            .unwrap_or("(none)") }}</p>
+    </section>
+
+{% when None %}
+    <div id="not-found">
+        <h1>Report Not Found</h1>
+        <p>この日の記録はありません</p>
+    </div>
+{% endmatch %}
+</body>
+</html>
