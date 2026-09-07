@@ -1,0 +1,9 @@
+services:
+  daily-reporter:
+    image: rust:1.89
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: cargo run --release
+    ports:
+      - "3001:3001"
