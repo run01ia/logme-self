@@ -1,5 +1,5 @@
 [package]
-name = "logme-self"
+name = "logme_self"
 version = "0.1.0"
 edition = "2024"
 
@@ -11,3 +11,4 @@ serde = { version = "1", features = ["derive"] }
 toml = "0.9"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+chrono = "0.4.45"

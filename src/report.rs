@@ -1,11 +1,10 @@
 use std::{
     fs, io,
-    path::{Path, PathBuf},
+    path::PathBuf,
 };
 
+use chrono::{Local, NaiveDate};
 use serde::Deserialize;
-
-use crate::report;
 
 #[derive(Debug, Deserialize)]
 pub struct Report {
@@ -37,6 +36,8 @@ impl ReportRepository {
     }
 
     pub fn load(&self, date: &str) -> io::Result<Option<Report>> {
+        if !is_valid_date(date) {return Ok(None);}
+
         let path = self.dir.join(format!("{date}.toml"));
 
         if !path.exists() {
@@ -77,4 +78,13 @@ impl ReportRepository {
 
         Ok(latest_date)
     }
+}
+
+pub fn is_valid_date(date: &str) -> bool {
+    let date = match NaiveDate::parse_from_str(date, "%Y-%m-%d") {
+        Ok(date) => date,
+        Err(_) => return false,
+    };
+
+    date <= Local::now().date_naive()
 }

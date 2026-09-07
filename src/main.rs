@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::{Router, routing::get, response::Html};
+use axum::{Router, response::Html, routing::get};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod report;
@@ -18,7 +18,7 @@ pub struct AppState {
 async fn main() {
     tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::new(
-                "logme_self=debug,tower_http=debug",
+            "logme_self=debug,tower_http=debug",
         ))
         .with(tracing_subscriber::fmt::layer())
         .init();
@@ -31,7 +31,13 @@ async fn main() {
         .route("/reports/daily/{date}", get(daily_report))
         .with_state(AppState { reports });
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let port = if cfg!(debug_assertions) {
+        3000
+    } else {
+        3001
+    };
+
+    let listener = tokio::net::TcpListener::bind(("127.0.0.1", port))
         .await
         .unwrap();
 
