@@ -7,92 +7,33 @@
 </head>
 
 <body>
-{% match report %}
-{% when Some(report) %}
+{% if let Some(r) = report %}
 
     <section id="top">
-        <h1>
-            {% match report.date %}
-            {% when Some(date) %}
-                {{ date }}
-            {% when None %}
-                (none)
-            {% endmatch %}
-        </h1>
-
-        <h2>
-            {% match report.updatedate %}
-            {% when Some(updatedate) %}
-                {{ updatedate }}
-            {% when None %}
-                (none)
-            {% endmatch %}
-        </h2>
+        <h1>{{ r.date }}</h1>
+        <h2>{{ r.updatedate }}</h2>
     </section>
 
     <section id="active-time">
         <h2>Active Time</h2>
 
-        <p>
-            {% match report.summary %}
-            {% when Some(summary) %}
-
-                {% match summary.start %}
-                {% when Some(start) %}
-                    {{ start }}
-                {% when None %}
-                    (none)
-                {% endmatch %}
-
-            {% when None %}
-                (none)
-            {% endmatch %}
-        </p>
-
-        <p>
-            {% match report.summary %}
-            {% when Some(summary) %}
-
-                {% match summary.finish %}
-                {% when Some(finish) %}
-                    {{ finish }}
-                {% when None %}
-                    (none)
-                {% endmatch %}
-
-            {% when None %}
-                (none)
-            {% endmatch %}
-        </p>
+        <p>{{ r.start }}</p>
+        <p>{{ r.finish }}</p>
     </section>
 
     <section>
         <h2>Note</h2>
 
-        <p style="white-space: pre-wrap;">
-            {% match report.note %}
-            {% when Some(note) %}
-
-                {% match note.text %}
-                {% when Some(text) %}
-                    {{ text }}
-                {% when None %}
-                    (none)
-                {% endmatch %}
-
-            {% when None %}
-                (none)
-            {% endmatch %}
-        </p>
+        <p style="white-space: pre-wrap;">{{ r.text }}</p>
     </section>
 
-{% when None %}
+{% else %}
 
     <div id="not-found">
         <h1>Report Not Found</h1>
         <p>この日の記録はありません</p>
     </div>
 
-{% endmatch %}
+{% endif %}
 </body>
 </html>

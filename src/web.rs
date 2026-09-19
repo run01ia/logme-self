@@ -1,4 +1,4 @@
-use crate::{AppState, report::{Report, is_valid_date}};
+use crate::{AppState, report::{ReportViewModel, is_valid_date}};
 use askama::Template;
 use axum::{
     extract::{Path, State}, http::StatusCode, response::{Html, IntoResponse, Redirect, Response},
@@ -7,7 +7,7 @@ use axum::{
 #[derive(Template)]
 #[template(path = "daily.html")]
 struct DailyTemplate {
-    report: Option<Report>,
+    report: Option<ReportViewModel>,
 }
 
 pub async fn daily_report(State(state): State<AppState>, Path(date): Path<String>) -> Response {
@@ -18,7 +18,7 @@ pub async fn daily_report(State(state): State<AppState>, Path(date): Path<String
     match state.reports.load(&date) {
         Ok(Some(report)) => Html(
             DailyTemplate {
-                report: Some(report),
+                report: Some(report.view_model()),
             }
             .render()
             .unwrap(),
