@@ -3,26 +3,75 @@ use std::{
     path::PathBuf,
 };
 
-use chrono::{Local, NaiveDate};
+use chrono::{DateTime, NaiveDate, Local};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct Report {
-    pub date: Option<String>,
-    pub updatedate: Option<String>,
-    pub summary: Option<Summary>,
-    pub note: Option<Note>,
+pub enum EventTag {
+    Move,
+    Class,
+    Study,
+    Work,
+    Meeting,
+    Life,
+    Activity,
+    Other(String),
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Summary {
+pub enum Status {
+    Scheduled,
+    Canceled,
+    Ongoing,
+    Done,
+}
+
+
+#[derive(Debug, Deserialize)]
+pub struct Event {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub tag: Option<EventTag>,
+    pub status: Option<Status>,
+    pub at: Option<String>,
+    pub from: Option<String>,
+    pub to: Option<String>,
+    pub start_at: Option<DateTime<Local>>,
+    pub end_at: Option<DateTime<Local>>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Report {
+    pub date: Option<NaiveDate>,
+    pub updatedate: Option<DateTime<Local>>,
     pub start: Option<String>,
     pub finish: Option<String>,
+    pub text: Option<String>,
+    pub events: Vec<Event>
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Note {
-    pub text: Option<String>,
+impl Report {
+    pub fn view_model(self) -> ReportViewModel {
+        ReportViewModel {
+            date: self.date
+                .map(|date| date.to_string())
+                .unwrap_or_else(|| "(none)".to_string()),
+            updatedate: self.updatedate
+                .map(|datetime| datetime.to_string())
+                .unwrap_or_else(|| "(none)".to_string()),
+            start: self.start.unwrap_or_else(|| "(none)".to_string()),
+            finish: self.finish.unwrap_or_else(|| "(none)".to_string()),
+            text: self.text.unwrap_or_else(|| "(none)".to_string()),
+        }
+    }
+}
+
+pub struct ReportViewModel {
+    pub date: String,
+    pub updatedate: String,
+    pub start: String,
+    pub finish: String,
+    pub text: String,
 }
 
 #[derive(Debug)]
